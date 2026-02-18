@@ -63,7 +63,7 @@
         .app {
             position: relative;
             z-index: 1;
-            padding: 12px 16px;
+            padding: 8px 16px;
             max-width: 1024px;
             margin: 0 auto;
         }
@@ -385,15 +385,15 @@
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 6px;
+            margin-bottom: 6px;
         }
 
         .stat-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 10px 14px;
+            padding: 8px 14px;
             position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
@@ -473,15 +473,15 @@
         .charts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 6px;
+            margin-bottom: 6px;
         }
 
         .chart-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 10px;
-            padding: 12px 14px;
+            padding: 10px 14px;
             transition: all 0.3s ease;
         }
 
@@ -509,7 +509,7 @@
 
         canvas {
             width: 100% !important;
-            height: 200px !important;
+            height: 155px !important;
         }
 
         /* Prediction Table — compact */
@@ -582,13 +582,7 @@
 
 <body>
     <div class="app">
-        <header class="header">
-            <h1>🧠 Neural Network Training Visualizer</h1>
-            <div class="subtitle-row">
-                <p>섭씨 → 화씨 변환을 학습하는 신경망의 훈련 과정</p>
-                <div class="formula-badge">목표: F = 1.8 × C + 32</div>
-            </div>
-        </header>
+
 
         <!-- SpaceX-Style Controls -->
         <div class="spacex-controls">
