@@ -596,7 +596,7 @@
                     <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
                     <div class="telemetry-readout">
                         <span class="telemetry-label">Training Epoch</span>
-                        <span class="telemetry-value" id="telemetryEpoch">1 <span class="unit">/ 500</span></span>
+                        <span class="telemetry-value" id="telemetryEpoch">1 <span class="unit">/ 1000</span></span>
                     </div>
                 </div>
                 <div class="spacex-right">
@@ -624,7 +624,7 @@
             <div class="stat-card">
                 <div class="stat-label">Epoch</div>
                 <div class="stat-value" id="statEpoch">1</div>
-                <div class="stat-target">/ 500</div>
+                <div class="stat-target">/ 1000</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Weight (가중치)</div>
@@ -705,13 +705,13 @@
 
         const milestones = [
             { epoch: 1, label: 'START', major: true },
-            { epoch: 50, label: '50' },
             { epoch: 100, label: '100' },
             { epoch: 200, label: '200' },
-            { epoch: 250, label: '250', major: true },
-            { epoch: 350, label: '350' },
-            { epoch: 400, label: '400' },
-            { epoch: 500, label: 'END', major: true },
+            { epoch: 300, label: '300' },
+            { epoch: 500, label: '500', major: true },
+            { epoch: 700, label: '700' },
+            { epoch: 800, label: '800' },
+            { epoch: 1000, label: 'END', major: true },
         ];
 
         fetch('./training_history.json')
@@ -781,9 +781,9 @@
                 el.classList.toggle('passed', milestones[i].epoch <= epoch);
             });
 
-            document.getElementById('phaseRapid').classList.toggle('active-phase', epoch <= 175);
-            document.getElementById('phaseConverge').classList.toggle('active-phase', epoch > 175 && epoch <= 350);
-            document.getElementById('phaseFine').classList.toggle('active-phase', epoch > 350);
+            document.getElementById('phaseRapid').classList.toggle('active-phase', epoch <= 350);
+            document.getElementById('phaseConverge').classList.toggle('active-phase', epoch > 350 && epoch <= 700);
+            document.getElementById('phaseFine').classList.toggle('active-phase', epoch > 700);
 
             document.getElementById('telemetryEpoch').innerHTML =
                 `${epoch} <span class="unit">/ ${totalEpochs}</span>`;
