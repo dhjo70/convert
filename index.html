@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Neural Network Training Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2035;
+            --border: rgba(99, 102, 241, 0.15);
+            --border-glow: rgba(99, 102, 241, 0.4);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-purple: #818cf8;
+            --accent-blue: #60a5fa;
+            --accent-cyan: #22d3ee;
+            --accent-green: #34d399;
+            --accent-orange: #fb923c;
+            --accent-red: #f87171;
+            --accent-pink: #f472b6;
+            --gradient-1: linear-gradient(135deg, #818cf8, #60a5fa);
+            --gradient-2: linear-gradient(135deg, #34d399, #22d3ee);
+            --gradient-3: linear-gradient(135deg, #f472b6, #fb923c);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(34, 211, 238, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(244, 114, 182, 0.05) 0%, transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ===== 4:3 Projector Optimized Layout ===== */
+        .app {
+            position: relative;
+            z-index: 1;
+            padding: 12px 16px;
+            max-width: 1024px;
+            margin: 0 auto;
+        }
+
+        /* Compact Header */
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .header .subtitle-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 4px;
+        }
+
+        .header p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-purple);
+        }
+
+        /* === SpaceX-Style Progress Bar (compact) === */
+        .spacex-controls {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 20px 10px;
+            margin-bottom: 10px;
+        }
+
+        .spacex-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .spacex-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .play-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid rgba(129, 140, 248, 0.4);
+            background: rgba(129, 140, 248, 0.1);
+            color: var(--accent-purple);
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .play-btn:hover {
+            background: rgba(129, 140, 248, 0.2);
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 15px rgba(129, 140, 248, 0.3);
+        }
+
+        .play-btn.playing {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(34, 211, 238, 0.1);
+            animation: pulseBtn 2s ease-in-out infinite;
+        }
+
+        .telemetry-readout {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .telemetry-label {
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .telemetry-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .telemetry-value .unit {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .spacex-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .speed-btn {
+            padding: 3px 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            background: transparent;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .speed-btn.active {
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--accent-cyan);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+
+        .speed-btn:hover {
+            border-color: var(--text-muted);
+            color: var(--text-primary);
+        }
+
+        /* Phase labels */
+        .phase-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
+            padding: 0 2px;
+        }
+
+        .phase-label {
+            font-size: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 2px 8px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .phase-label.rapid {
+            color: var(--accent-orange);
+        }
+
+        .phase-label.converging {
+            color: var(--accent-blue);
+        }
+
+        .phase-label.fine-tuning {
+            color: var(--accent-green);
+        }
+
+        .phase-label.active-phase {
+            background: rgba(34, 211, 238, 0.1);
+        }
+
+        /* The SpaceX Progress Timeline */
+        .spacex-timeline {
+            position: relative;
+            height: 40px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .timeline-track {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(148, 163, 184, 0.1);
+            border-radius: 2px;
+        }
+
+        .timeline-progress {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            height: 3px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            transition: width 0.05s linear;
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
+        }
+
+        .timeline-glow {
+            position: absolute;
+            top: 8px;
+            height: 11px;
+            left: 0;
+            border-radius: 6px;
+            background: linear-gradient(90deg, transparent 90%, rgba(34, 211, 238, 0.15));
+            pointer-events: none;
+        }
+
+        .timeline-indicator {
+            position: absolute;
+            top: 7px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            border: 2px solid var(--bg-card);
+            box-shadow: 0 0 12px rgba(34, 211, 238, 0.6), 0 0 4px rgba(34, 211, 238, 0.9);
+            transition: left 0.05s linear;
+            z-index: 2;
+        }
+
+        .timeline-indicator.active {
+            animation: pulseIndicator 1.5s ease-in-out infinite;
+        }
+
+        .milestone {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translateX(-50%);
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .milestone-tick {
+            width: 1px;
+            height: 8px;
+            background: rgba(148, 163, 184, 0.25);
+            top: 8px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .milestone.major .milestone-tick {
+            width: 2px;
+            height: 12px;
+            top: 6px;
+            background: rgba(148, 163, 184, 0.4);
+        }
+
+        .milestone-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            margin-top: 14px;
+            white-space: nowrap;
+            opacity: 0.7;
+        }
+
+        .milestone.major .milestone-label {
+            font-size: 0.55rem;
+            opacity: 1;
+            color: var(--text-secondary);
+        }
+
+        .milestone.passed .milestone-tick {
+            background: rgba(34, 211, 238, 0.5);
+        }
+
+        .milestone.passed .milestone-label {
+            color: rgba(34, 211, 238, 0.6);
+        }
+
+        @keyframes pulseIndicator {
+
+            0%,
+            100% {
+                box-shadow: 0 0 12px rgba(34, 211, 238, 0.6), 0 0 4px rgba(34, 211, 238, 0.9);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(34, 211, 238, 0.9), 0 0 8px rgba(34, 211, 238, 1);
+            }
+        }
+
+        @keyframes pulseBtn {
+
+            0%,
+            100% {
+                box-shadow: 0 0 8px rgba(34, 211, 238, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 16px rgba(34, 211, 238, 0.4);
+            }
+        }
+
+        /* Stat Cards — compact for 4:3 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .stat-card:nth-child(1)::before {
+            background: var(--gradient-1);
+        }
+
+        .stat-card:nth-child(2)::before {
+            background: var(--gradient-2);
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: var(--gradient-3);
+        }
+
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+        }
+
+        .stat-label {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-card:nth-child(1) .stat-value {
+            color: var(--accent-purple);
+        }
+
+        .stat-card:nth-child(2) .stat-value {
+            color: var(--accent-green);
+        }
+
+        .stat-card:nth-child(3) .stat-value {
+            color: var(--accent-pink);
+        }
+
+        .stat-card:nth-child(4) .stat-value {
+            color: var(--accent-orange);
+        }
+
+        .stat-target {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Charts Grid — 4:3 optimized */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover {
+            border-color: var(--border-glow);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-title .icon {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 200px !important;
+        }
+
+        /* Prediction Table — compact */
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .pred-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+        }
+
+        .pred-table th {
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            font-weight: 500;
+            text-align: center;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pred-table td {
+            padding: 5px 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.05);
+            color: var(--text-primary);
+        }
+
+        .pred-table tr:hover td {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .error-cell {
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header class="header">
+            <h1>🧠 Neural Network Training Visualizer</h1>
+            <div class="subtitle-row">
+                <p>섭씨 → 화씨 변환을 학습하는 신경망의 훈련 과정</p>
+                <div class="formula-badge">목표: F = 1.8 × C + 32</div>
+            </div>
+        </header>
+
+        <!-- SpaceX-Style Controls -->
+        <div class="spacex-controls">
+            <div class="spacex-top-row">
+                <div class="spacex-left">
+                    <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+                    <div class="telemetry-readout">
+                        <span class="telemetry-label">Training Epoch</span>
+                        <span class="telemetry-value" id="telemetryEpoch">1 <span class="unit">/ 1000</span></span>
+                    </div>
+                </div>
+                <div class="spacex-right">
+                    <button class="speed-btn" onclick="setSpeed(100)" data-speed="100">1×</button>
+                    <button class="speed-btn active" onclick="setSpeed(40)" data-speed="40">3×</button>
+                    <button class="speed-btn" onclick="setSpeed(10)" data-speed="10">10×</button>
+                    <button class="speed-btn" onclick="setSpeed(4)" data-speed="4">25×</button>
+                </div>
+            </div>
+            <div class="phase-labels">
+                <span class="phase-label rapid" id="phaseRapid">🔥 Rapid Learning</span>
+                <span class="phase-label converging" id="phaseConverge">📐 Converging</span>
+                <span class="phase-label fine-tuning" id="phaseFine">🎯 Fine Tuning</span>
+            </div>
+            <div class="spacex-timeline" id="spacexTimeline">
+                <div class="timeline-track"></div>
+                <div class="timeline-progress" id="timelineProgress"></div>
+                <div class="timeline-glow" id="timelineGlow"></div>
+                <div class="timeline-indicator" id="timelineIndicator"></div>
+                <div class="timeline-milestones" id="timelineMilestones"></div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Epoch</div>
+                <div class="stat-value" id="statEpoch">1</div>
+                <div class="stat-target">/ 1000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Weight (가중치)</div>
+                <div class="stat-value" id="statWeight">—</div>
+                <div class="stat-target">목표: 1.8</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Bias (편향)</div>
+                <div class="stat-value" id="statBias">—</div>
+                <div class="stat-target">목표: 32.0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Loss (오차)</div>
+                <div class="stat-value" id="statLoss">—</div>
+                <div class="stat-target">목표: 0.0</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title">
+                    <span class="icon" style="background: var(--accent-blue);"></span>
+                    데이터 피팅 — 예측 vs 실제
+                </div>
+                <canvas id="fittingChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">
+                    <span class="icon" style="background: var(--accent-orange);"></span>
+                    Loss 곡선 — 오차 감소 추이
+                </div>
+                <canvas id="lossChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">
+                    <span class="icon" style="background: var(--accent-green);"></span>
+                    Weight 변화 — 목표 1.8
+                </div>
+                <canvas id="weightChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">
+                    <span class="icon" style="background: var(--accent-pink);"></span>
+                    Bias 변화 — 목표 32.0
+                </div>
+                <canvas id="biasChart"></canvas>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="chart-title" style="margin-bottom: 6px;">
+                <span class="icon" style="background: var(--accent-cyan);"></span>
+                에포크별 예측값 비교
+            </div>
+            <table class="pred-table">
+                <thead>
+                    <tr>
+                        <th>섭씨 (°C)</th>
+                        <th>정답 (°F)</th>
+                        <th>예측값 (°F)</th>
+                        <th>오차</th>
+                    </tr>
+                </thead>
+                <tbody id="predTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script>
+        let data = null;
+        let playing = false;
+        let currentEpoch = 0;
+        let totalEpochs = 0;
+        let interval = null;
+        let speed = 40;
+        let fittingChart, lossChart, weightChart, biasChart;
+
+        const milestones = [
+            { epoch: 1, label: 'START', major: true },
+            { epoch: 100, label: '100' },
+            { epoch: 200, label: '200' },
+            { epoch: 300, label: '300' },
+            { epoch: 500, label: '500', major: true },
+            { epoch: 700, label: '700' },
+            { epoch: 800, label: '800' },
+            { epoch: 1000, label: 'END', major: true },
+        ];
+
+        fetch('./training_history.json')
+            .then(r => r.json())
+            .then(d => {
+                data = d;
+                totalEpochs = data.history.length;
+                initTimeline();
+                initCharts();
+                updateView(0);
+            })
+            .catch(err => {
+                document.querySelector('.app').innerHTML = `
+            <div style="text-align:center;padding:60px;color:var(--accent-red);">
+                <h2>⚠️ training_history.json을 불러올 수 없습니다</h2>
+                <p style="margin-top:12px;color:var(--text-secondary);">
+                    먼저 <code>uv run python export_training.py</code>를 실행하세요.
+                </p>
+            </div>`;
+            });
+
+        function initTimeline() {
+            const container = document.getElementById('timelineMilestones');
+            milestones.forEach(m => {
+                const el = document.createElement('div');
+                el.className = 'milestone' + (m.major ? ' major' : '');
+                const pct = ((m.epoch - 1) / (totalEpochs - 1)) * 100;
+                el.style.left = pct + '%';
+                el.innerHTML = `<div class="milestone-tick"></div><span class="milestone-label">${m.label}</span>`;
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = Math.min(m.epoch - 1, totalEpochs - 1);
+                    if (playing) togglePlay();
+                    updateView(idx);
+                });
+                container.appendChild(el);
+            });
+
+            const timeline = document.getElementById('spacexTimeline');
+            let isDragging = false;
+
+            function seekToPosition(e) {
+                const rect = timeline.getBoundingClientRect();
+                const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+                const pct = x / rect.width;
+                const idx = Math.round(pct * (totalEpochs - 1));
+                updateView(idx);
+            }
+
+            timeline.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                if (playing) togglePlay();
+                seekToPosition(e);
+            });
+            document.addEventListener('mousemove', (e) => { if (isDragging) seekToPosition(e); });
+            document.addEventListener('mouseup', () => { isDragging = false; });
+        }
+
+        function updateTimeline(epochIdx) {
+            const pct = (epochIdx / (totalEpochs - 1)) * 100;
+            document.getElementById('timelineProgress').style.width = pct + '%';
+            document.getElementById('timelineGlow').style.width = pct + '%';
+            document.getElementById('timelineIndicator').style.left = `calc(${pct}% - 4.5px)`;
+
+            const epoch = epochIdx + 1;
+            document.querySelectorAll('.milestone').forEach((el, i) => {
+                el.classList.toggle('passed', milestones[i].epoch <= epoch);
+            });
+
+            document.getElementById('phaseRapid').classList.toggle('active-phase', epoch <= 350);
+            document.getElementById('phaseConverge').classList.toggle('active-phase', epoch > 350 && epoch <= 700);
+            document.getElementById('phaseFine').classList.toggle('active-phase', epoch > 700);
+
+            document.getElementById('telemetryEpoch').innerHTML =
+                `${epoch} <span class="unit">/ ${totalEpochs}</span>`;
+            document.getElementById('timelineIndicator').classList.toggle('active', playing);
+        }
+
+        function initCharts() {
+            const baseOpts = {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 0 },
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: 'rgba(148,163,184,0.06)' }, ticks: { color: '#64748b', font: { size: 9 } } },
+                    y: { grid: { color: 'rgba(148,163,184,0.06)' }, ticks: { color: '#64748b', font: { size: 9 } } }
+                }
+            };
+
+            fittingChart = new Chart(document.getElementById('fittingChart'), {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: '정답',
+                            data: data.celsius.map((c, i) => ({ x: c, y: data.fahrenheit[i] })),
+                            backgroundColor: 'rgba(34, 211, 238, 0.8)',
+                            borderColor: '#22d3ee',
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            borderWidth: 2,
+                            order: 1,
+                        },
+                        {
+                            label: '예측 라인',
+                            data: [],
+                            type: 'line',
+                            borderColor: '#818cf8',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false,
+                            order: 2,
+                        },
+                        {
+                            label: '예측',
+                            data: [],
+                            backgroundColor: 'rgba(244, 114, 182, 0.8)',
+                            borderColor: '#f472b6',
+                            pointRadius: 4,
+                            pointStyle: 'rectRot',
+                            borderWidth: 1.5,
+                            order: 0,
+                        }
+                    ]
+                },
+                options: {
+                    ...baseOpts,
+                    plugins: {
+                        ...baseOpts.plugins,
+                        legend: {
+                            display: true,
+                            labels: { color: '#94a3b8', font: { size: 9 }, usePointStyle: true, padding: 10 }
+                        }
+                    },
+                    scales: {
+                        ...baseOpts.scales,
+                        x: { ...baseOpts.scales.x, title: { display: true, text: '섭씨 (°C)', color: '#64748b', font: { size: 9 } } },
+                        y: { ...baseOpts.scales.y, title: { display: true, text: '화씨 (°F)', color: '#64748b', font: { size: 9 } }, min: -80, max: 140 }
+                    }
+                }
+            });
+
+            lossChart = new Chart(document.getElementById('lossChart'), {
+                type: 'line',
+                data: {
+                    labels: [], datasets: [{
+                        data: [],
+                        borderColor: '#fb923c',
+                        backgroundColor: 'rgba(251, 146, 60, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: true,
+                        tension: 0.3,
+                    }]
+                },
+                options: {
+                    ...baseOpts,
+                    scales: {
+                        ...baseOpts.scales,
+                        x: { ...baseOpts.scales.x, title: { display: true, text: 'Epoch', color: '#64748b', font: { size: 9 } } },
+                        y: { ...baseOpts.scales.y, title: { display: true, text: 'Loss (MSE)', color: '#64748b', font: { size: 9 } }, type: 'logarithmic' }
+                    }
+                }
+            });
+
+            weightChart = new Chart(document.getElementById('weightChart'), {
+                type: 'line',
+                data: {
+                    labels: [], datasets: [
+                        { data: [], borderColor: '#34d399', backgroundColor: 'rgba(52, 211, 153, 0.1)', borderWidth: 2, pointRadius: 0, fill: true, tension: 0.3 },
+                        { label: '목표 (1.8)', data: [], borderColor: 'rgba(52, 211, 153, 0.3)', borderWidth: 1.5, borderDash: [6, 4], pointRadius: 0, fill: false }
+                    ]
+                },
+                options: {
+                    ...baseOpts,
+                    scales: {
+                        ...baseOpts.scales,
+                        x: { ...baseOpts.scales.x, title: { display: true, text: 'Epoch', color: '#64748b', font: { size: 9 } } },
+                        y: { ...baseOpts.scales.y, title: { display: true, text: 'Weight', color: '#64748b', font: { size: 9 } } }
+                    }
+                }
+            });
+
+            biasChart = new Chart(document.getElementById('biasChart'), {
+                type: 'line',
+                data: {
+                    labels: [], datasets: [
+                        { data: [], borderColor: '#f472b6', backgroundColor: 'rgba(244, 114, 182, 0.1)', borderWidth: 2, pointRadius: 0, fill: true, tension: 0.3 },
+                        { label: '목표 (32.0)', data: [], borderColor: 'rgba(244, 114, 182, 0.3)', borderWidth: 1.5, borderDash: [6, 4], pointRadius: 0, fill: false }
+                    ]
+                },
+                options: {
+                    ...baseOpts,
+                    scales: {
+                        ...baseOpts.scales,
+                        x: { ...baseOpts.scales.x, title: { display: true, text: 'Epoch', color: '#64748b', font: { size: 9 } } },
+                        y: { ...baseOpts.scales.y, title: { display: true, text: 'Bias', color: '#64748b', font: { size: 9 } } }
+                    }
+                }
+            });
+        }
+
+        function updateView(epochIdx) {
+            if (!data) return;
+            currentEpoch = epochIdx;
+            const h = data.history[epochIdx];
+
+            document.getElementById('statEpoch').textContent = h.epoch;
+            document.getElementById('statWeight').textContent = h.weight.toFixed(4);
+            document.getElementById('statBias').textContent = h.bias.toFixed(4);
+            document.getElementById('statLoss').textContent = h.loss < 10 ? h.loss.toFixed(4) : h.loss.toFixed(1);
+
+            updateTimeline(epochIdx);
+
+            fittingChart.data.datasets[1].data = h.line_x.map((x, i) => ({ x, y: h.line_y[i] }));
+            fittingChart.data.datasets[2].data = data.celsius.map((c, i) => ({ x: c, y: h.predictions[i] }));
+            fittingChart.update();
+
+            const labels = data.history.slice(0, epochIdx + 1).map(d => d.epoch);
+            const losses = data.history.slice(0, epochIdx + 1).map(d => d.loss);
+            const weights = data.history.slice(0, epochIdx + 1).map(d => d.weight);
+            const biases = data.history.slice(0, epochIdx + 1).map(d => d.bias);
+
+            lossChart.data.labels = labels;
+            lossChart.data.datasets[0].data = losses;
+            lossChart.update();
+
+            weightChart.data.labels = labels;
+            weightChart.data.datasets[0].data = weights;
+            weightChart.data.datasets[1].data = labels.map(() => 1.8);
+            weightChart.update();
+
+            biasChart.data.labels = labels;
+            biasChart.data.datasets[0].data = biases;
+            biasChart.data.datasets[1].data = labels.map(() => 32.0);
+            biasChart.update();
+
+            const tbody = document.getElementById('predTableBody');
+            tbody.innerHTML = data.celsius.map((c, i) => {
+                const actual = data.fahrenheit[i];
+                const pred = h.predictions[i];
+                const error = Math.abs(actual - pred);
+                const errorColor = error < 1 ? 'var(--accent-green)' : error < 5 ? 'var(--accent-orange)' : 'var(--accent-red)';
+                return `<tr>
+            <td>${c}°C</td>
+            <td>${actual}°F</td>
+            <td>${pred.toFixed(2)}°F</td>
+            <td class="error-cell" style="color:${errorColor}">${error.toFixed(2)}</td>
+        </tr>`;
+            }).join('');
+        }
+
+        function togglePlay() {
+            playing = !playing;
+            const btn = document.getElementById('playBtn');
+            btn.textContent = playing ? '⏸' : '▶';
+            btn.classList.toggle('playing', playing);
+            document.getElementById('timelineIndicator').classList.toggle('active', playing);
+
+            if (playing) {
+                if (currentEpoch >= totalEpochs - 1) currentEpoch = 0;
+                interval = setInterval(() => {
+                    if (currentEpoch >= totalEpochs - 1) { togglePlay(); return; }
+                    currentEpoch++;
+                    updateView(currentEpoch);
+                }, speed);
+            } else {
+                clearInterval(interval);
+            }
+        }
+
+        function setSpeed(ms) {
+            speed = ms;
+            document.querySelectorAll('.speed-btn').forEach(b => {
+                b.classList.toggle('active', parseInt(b.dataset.speed) === ms);
+            });
+            if (playing) {
+                clearInterval(interval);
+                interval = setInterval(() => {
+                    if (currentEpoch >= totalEpochs - 1) { togglePlay(); return; }
+                    currentEpoch++;
+                    updateView(currentEpoch);
+                }, speed);
+            }
+        }
+    </script>
+</body>
+
+</html>

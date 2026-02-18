@@ -1,0 +1,10 @@
+[project]
+name = "gemini-convert"
+version = "0.1.0"
+description = "Neural network training visualizer for Celsius to Fahrenheit conversion"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.4.2",
+    "tensorflow>=2.20.0",
+]
