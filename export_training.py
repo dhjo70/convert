@@ -15,8 +15,8 @@ model = tf.keras.Sequential([
 # 학습률 스케줄링: 처음엔 빠르게, 나중엔 세밀하게 조정
 lr_schedule = tf.keras.optimizers.schedules.CosineDecay(
     initial_learning_rate=0.1,
-    decay_steps=1000,
-    alpha=0.001,  # 최소 학습률 = 0.1 * 0.001 = 0.0001
+    decay_steps=1500,
+    alpha=0.01,  # 최소 학습률 = 0.1 * 0.01 = 0.001
 )
 model.compile(loss='mean_squared_error', optimizer=tf.keras.optimizers.Adam(lr_schedule))
 
