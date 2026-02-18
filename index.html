@@ -714,7 +714,7 @@
             { epoch: 1000, label: 'END', major: true },
         ];
 
-        fetch('./training_history.json')
+        fetch('./training_history.json?t=' + Date.now())
             .then(r => r.json())
             .then(d => {
                 data = d;
