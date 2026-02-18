@@ -15,13 +15,13 @@ model = tf.keras.Sequential([
 # 학습률 스케줄링: 처음엔 빠르게, 나중엔 세밀하게 조정
 lr_schedule = tf.keras.optimizers.schedules.CosineDecay(
     initial_learning_rate=0.1,
-    decay_steps=1000,
+    decay_steps=500,
     alpha=0.001,  # 최소 학습률 = 0.1 * 0.001 = 0.0001
 )
 model.compile(loss='mean_squared_error', optimizer=tf.keras.optimizers.Adam(lr_schedule))
 
 # 에포크별 학습 데이터 수집
-total_epochs = 1000
+total_epochs = 500
 history_data = []
 
 # 예측용 x 범위 (-50 ~ 50)
