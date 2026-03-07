@@ -16,7 +16,7 @@
 ### 1. 학습 데이터 생성
 
 ```bash
-uv run python export_training.py
+uv run python3 export_training.py
 ```
 
 `training_history.json` 파일이 생성됩니다.
