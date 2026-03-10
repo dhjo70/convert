@@ -1,22 +1,22 @@
 :root {
-    --bg-primary: #0a0e1a;
-    --bg-secondary: #111827;
-    --bg-card: #1a2035;
-    --border: rgba(99, 102, 241, 0.15);
-    --border-glow: rgba(99, 102, 241, 0.4);
-    --text-primary: #e2e8f0;
-    --text-secondary: #94a3b8;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-card: #ffffff;
+    --border: #e2e8f0;
+    --border-glow: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
     --text-muted: #64748b;
-    --accent-purple: #818cf8;
-    --accent-blue: #60a5fa;
-    --accent-cyan: #22d3ee;
-    --accent-green: #34d399;
-    --accent-orange: #fb923c;
-    --accent-red: #f87171;
-    --accent-pink: #f472b6;
-    --gradient-1: linear-gradient(135deg, #818cf8, #60a5fa);
-    --gradient-2: linear-gradient(135deg, #34d399, #22d3ee);
-    --gradient-3: linear-gradient(135deg, #f472b6, #fb923c);
+    --accent-purple: #4f46e5;
+    --accent-blue: #2563eb;
+    --accent-cyan: #0891b2;
+    --accent-green: #16a34a;
+    --accent-orange: #ea580c;
+    --accent-red: #dc2626;
+    --accent-pink: #db2777;
+    --gradient-1: #4f46e5;
+    --gradient-2: #16a34a;
+    --gradient-3: #db2777;
 }
 
 * {
@@ -31,22 +31,13 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
-    font-size: 1.1rem; /* Base size adjusted */
+    font-size: 1.3rem;
+    /* Base size adjusted for projector */
 }
 
 body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background:
-        radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(34, 211, 238, 0.06) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 80%, rgba(244, 114, 182, 0.05) 0%, transparent 50%);
-    z-index: 0;
-    pointer-events: none;
+    display: none;
+    /* Remove dark glow effect */
 }
 
 /* ===== 4:3 Projector Optimized Layout ===== */
@@ -65,12 +56,9 @@ body::before {
 }
 
 .header h1 {
-    font-size: 2.2rem;
+    font-size: 3rem;
     font-weight: 800;
-    background: var(--gradient-1);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--gradient-1);
     letter-spacing: -0.02em;
 }
 
@@ -79,23 +67,24 @@ body::before {
     align-items: center;
     justify-content: center;
     gap: 16px;
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
 .header p {
-    font-size: 1rem;
+    font-size: 1.25rem;
     color: var(--text-secondary);
-    font-weight: 300;
+    font-weight: 500;
 }
 
 .formula-badge {
     display: inline-block;
-    padding: 4px 14px;
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid var(--border);
+    padding: 6px 18px;
+    background: rgba(79, 70, 229, 0.1);
+    border: 1px solid var(--accent-purple);
     border-radius: 100px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.95rem;
+    font-size: 1.15rem;
+    font-weight: 600;
     color: var(--accent-purple);
 }
 
@@ -157,26 +146,26 @@ body::before {
 }
 
 .telemetry-label {
-    font-size: 0.75rem;
+    font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.15em;
     color: var(--text-muted);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .telemetry-value {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.6rem;
-    font-weight: 700;
+    font-size: 2.5rem;
+    font-weight: 800;
     color: var(--text-primary);
     letter-spacing: -0.02em;
     line-height: 1.2;
 }
 
 .telemetry-value .unit {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: var(--text-muted);
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .spacex-right {
@@ -186,25 +175,27 @@ body::before {
 }
 
 .speed-btn {
-    padding: 5px 12px;
+    padding: 8px 16px;
     border-radius: 6px;
-    border: 1px solid rgba(148, 163, 184, 0.15);
-    background: transparent;
+    border: 1px solid var(--border);
+    /* Made visible */
+    background: var(--bg-secondary);
     color: var(--text-muted);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .speed-btn.active {
-    background: rgba(34, 211, 238, 0.1);
+    background: rgba(8, 145, 178, 0.1);
     color: var(--accent-cyan);
-    border-color: rgba(34, 211, 238, 0.4);
+    border-color: var(--accent-cyan);
 }
 
 .speed-btn:hover {
-    border-color: var(--text-muted);
+    border-color: var(--text-secondary);
     color: var(--text-primary);
 }
 
@@ -217,11 +208,11 @@ body::before {
 }
 
 .phase-label {
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.9rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 4px;
     transition: all 0.3s ease;
 }
@@ -239,7 +230,8 @@ body::before {
 }
 
 .phase-label.active-phase {
-    background: rgba(34, 211, 238, 0.1);
+    background: rgba(8, 145, 178, 0.1);
+    /* Adjusted for light background */
 }
 
 /* The SpaceX Progress Timeline */
@@ -255,47 +247,40 @@ body::before {
     top: 15px;
     left: 0;
     right: 0;
-    height: 4px;
-    background: rgba(148, 163, 184, 0.1);
-    border-radius: 2px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
 }
 
 .timeline-progress {
     position: absolute;
     top: 15px;
     left: 0;
-    height: 4px;
-    border-radius: 2px;
-    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+    height: 6px;
+    border-radius: 3px;
+    background: var(--accent-blue);
     transition: width 0.05s linear;
-    box-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
 }
 
 .timeline-glow {
-    position: absolute;
-    top: 11px;
-    height: 12px;
-    left: 0;
-    border-radius: 6px;
-    background: linear-gradient(90deg, transparent 90%, rgba(34, 211, 238, 0.15));
-    pointer-events: none;
+    display: none;
 }
 
 .timeline-indicator {
     position: absolute;
     top: 9px;
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     background: var(--accent-cyan);
     border: 3px solid var(--bg-card);
-    box-shadow: 0 0 12px rgba(34, 211, 238, 0.6), 0 0 4px rgba(34, 211, 238, 0.9);
     transition: left 0.05s linear;
     z-index: 2;
 }
 
 .timeline-indicator.active {
-    animation: pulseIndicator 1.5s ease-in-out infinite;
+    /* Solid, not glowing */
+    transform: scale(1.1);
 }
 
 .milestone {
@@ -310,89 +295,77 @@ body::before {
 
 .milestone-tick {
     width: 2px;
-    height: 10px;
-    background: rgba(148, 163, 184, 0.25);
+    height: 12px;
+    background: var(--text-muted);
     top: 12px;
     position: relative;
     transition: all 0.2s ease;
 }
 
 .milestone.major .milestone-tick {
-    width: 3px;
-    height: 16px;
+    width: 4px;
+    height: 18px;
     top: 9px;
-    background: rgba(148, 163, 184, 0.4);
+    background: var(--text-secondary);
 }
 
 .milestone-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
-    margin-top: 20px;
+    margin-top: 22px;
     white-space: nowrap;
-    opacity: 0.7;
+    opacity: 0.8;
+    font-weight: 500;
 }
 
 .milestone.major .milestone-label {
-    font-size: 0.85rem;
+    font-size: 1rem;
     opacity: 1;
-    color: var(--text-secondary);
+    color: var(--text-primary);
+    font-weight: 700;
 }
 
 .milestone.passed .milestone-tick {
-    background: rgba(34, 211, 238, 0.5);
+    background: var(--accent-cyan);
 }
 
 .milestone.passed .milestone-label {
-    color: rgba(34, 211, 238, 0.6);
+    color: var(--accent-cyan);
 }
 
 @keyframes pulseIndicator {
-
-    0%,
-    100% {
-        box-shadow: 0 0 12px rgba(34, 211, 238, 0.6), 0 0 4px rgba(34, 211, 238, 0.9);
-    }
-
-    50% {
-        box-shadow: 0 0 20px rgba(34, 211, 238, 0.9), 0 0 8px rgba(34, 211, 238, 1);
-    }
+    /* Removed for projector readability */
 }
 
 @keyframes pulseBtn {
-
-    0%,
-    100% {
-        box-shadow: 0 0 8px rgba(34, 211, 238, 0.2);
-    }
-
-    50% {
-        box-shadow: 0 0 16px rgba(34, 211, 238, 0.4);
-    }
+    /* Removed for projector readability */
 }
 
 /* Stat Cards */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    /* Changed to 2x2 for 4:3 */
+    gap: 16px;
+    margin-bottom: 16px;
 }
 
 .stat-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 18px;
+    border-radius: 12px;
+    padding: 16px 24px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
 }
 
 .stat-card:hover {
-    border-color: var(--border-glow);
+    border-color: var(--text-muted);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    /* Soft drop shadow instead of glow */
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .stat-card::before {
@@ -401,38 +374,38 @@ body::before {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 4px;
 }
 
 .stat-card:nth-child(1)::before {
-    background: var(--gradient-1);
+    background: var(--accent-purple);
 }
 
 .stat-card:nth-child(2)::before {
-    background: var(--gradient-2);
+    background: var(--accent-green);
 }
 
 .stat-card:nth-child(3)::before {
-    background: var(--gradient-3);
+    background: var(--accent-pink);
 }
 
 .stat-card:nth-child(4)::before {
-    background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+    background: var(--accent-orange);
 }
 
 .stat-label {
-    font-size: 0.8rem;
+    font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--text-muted);
-    font-weight: 600;
-    margin-bottom: 6px;
+    font-weight: 700;
+    margin-bottom: 8px;
 }
 
 .stat-value {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-size: 2.75rem;
+    font-weight: 800;
     line-height: 1.2;
 }
 
@@ -453,9 +426,10 @@ body::before {
 }
 
 .stat-target {
-    font-size: 0.85rem;
+    font-size: 1.1rem;
     color: var(--text-muted);
-    margin-top: 4px;
+    margin-top: 6px;
+    font-weight: 600;
     font-family: 'JetBrains Mono', monospace;
 }
 
@@ -463,50 +437,52 @@ body::before {
 .charts-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 16px;
+    margin-bottom: 16px;
 }
 
 .chart-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 18px;
+    border-radius: 12px;
+    padding: 16px 20px;
     transition: all 0.3s ease;
 }
 
 .chart-card:hover {
-    border-color: var(--border-glow);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    border-color: var(--text-muted);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    /* Soft drop shadow */
 }
 
 .chart-title {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 700;
     color: var(--text-secondary);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .chart-title .icon {
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     display: inline-block;
 }
 
 canvas {
     width: 100% !important;
-    height: 200px !important;
+    height: 250px !important;
+    /* Made charts taller */
 }
 
 /* Prediction Table */
 .table-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 16px 20px;
 }
 
@@ -514,31 +490,31 @@ canvas {
     width: 100%;
     border-collapse: collapse;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
 }
 
 .pred-table th {
-    padding: 10px;
+    padding: 12px;
     border-bottom: 2px solid var(--border);
     color: var(--text-muted);
-    font-weight: 600;
+    font-weight: 700;
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 .pred-table td {
-    padding: 8px 10px;
+    padding: 10px 12px;
     text-align: center;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.05);
+    border-bottom: 1px solid var(--bg-secondary);
     color: var(--text-primary);
 }
 
 .pred-table tr:hover td {
-    background: rgba(99, 102, 241, 0.05);
+    background: var(--bg-secondary);
 }
 
 .error-cell {
-    font-weight: 600;
+    font-weight: 700;
 }
