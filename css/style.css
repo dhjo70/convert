@@ -382,15 +382,15 @@ body::before {
 }
 
 .stat-card:nth-child(2)::before {
-    background: var(--accent-green);
+    background: var(--accent-orange);
 }
 
 .stat-card:nth-child(3)::before {
-    background: var(--accent-pink);
+    background: var(--accent-green);
 }
 
 .stat-card:nth-child(4)::before {
-    background: var(--accent-orange);
+    background: var(--accent-pink);
 }
 
 .stat-label {
@@ -414,15 +414,15 @@ body::before {
 }
 
 .stat-card:nth-child(2) .stat-value {
-    color: var(--accent-green);
+    color: var(--accent-orange);
 }
 
 .stat-card:nth-child(3) .stat-value {
-    color: var(--accent-pink);
+    color: var(--accent-green);
 }
 
 .stat-card:nth-child(4) .stat-value {
-    color: var(--accent-orange);
+    color: var(--accent-pink);
 }
 
 .stat-target {
